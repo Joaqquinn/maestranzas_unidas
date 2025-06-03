@@ -1,0 +1,19 @@
+{% extends 'authentication/base.html' %}
+
+{% block title %}Detalle de Pieza{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Detalle de la Pieza</h2>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ pieza.nombre }}</h5>
+            <p class="card-text"><strong>Descripción:</strong> {{ pieza.descripcion }}</p>
+            <p class="card-text"><strong>Número de Serie:</strong> {{ pieza.numero_serie }}</p>
+            <p class="card-text"><strong>Ubicación:</strong> {{ pieza.ubicacion }}</p>
+            <p class="card-text"><strong>Cantidad:</strong> {{ pieza.cantidad }}</p>
+        </div>
+    </div>
+    <a href="{% url 'listar_piezas' %}"  class="btn btn-secondary mt-3">Volver al Inventario</a>
+</div>
+{% endblock %}
