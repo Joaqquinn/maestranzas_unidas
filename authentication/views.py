@@ -34,6 +34,7 @@ def dashboard_view(request):
     try:
         profile = request.user.profile
         piezas_stock_bajo = Pieza.objects.filter(cantidad__lte=models.F('stock_minimo')).count()
+        stock_bajo = Pieza.objects.filter(cantidad__lte=models.F("stock_minimo"))
             
     except Profile.DoesNotExist:
         # Si el perfil no existe, desconectamos al usuario
@@ -48,6 +49,7 @@ def dashboard_view(request):
         'role_display': profile.get_role_display(),
         'total_piezas': Pieza.objects.count(),
         'piezas_stock_bajo': piezas_stock_bajo,
+        'stock_bajo': stock_bajo,
 
     }
     return render(request, 'authentication/dashboard.html', context)

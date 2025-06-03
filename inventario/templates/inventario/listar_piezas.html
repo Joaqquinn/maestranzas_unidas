@@ -3,6 +3,8 @@
 {% block title %}Listado de Piezas{% endblock %}
 
 {% block content %}
+
+
 <div class="container mt-4">
     <h3 class="mb-4">Listado de Piezas Registradas</h3>
 
@@ -14,6 +16,7 @@
                 <th>Número de Serie</th>
                 <th>Ubicación</th>
                 <th>Cantidad</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -22,7 +25,18 @@
                 <td><a href="{% url 'pieza_detalle' pk=pieza.id %}"> {{ pieza.nombre }}</a></td>
                 <td>{{ pieza.numero_serie }}</td>
                 <td>{{ pieza.ubicacion }}</td>
-                <td>{{ pieza.cantidad }}</td>
+                <td>
+                    {{ pieza.cantidad }}
+    {% if pieza.cantidad <= pieza.stock_minimo %}
+        <i class="bi bi-exclamation-triangle-fill text-danger ms-2"
+           data-bs-toggle="tooltip"
+           data-bs-placement="top"
+           title="Stock por debajo del mínimo">
+        </i>
+    {% endif %}
+                    
+                </td>
+
             </tr>
             {% endfor %}
         </tbody>

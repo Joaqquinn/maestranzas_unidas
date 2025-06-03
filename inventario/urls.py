@@ -7,5 +7,7 @@ urlpatterns = [
     path('listar/', views.listar_piezas, name='listar_piezas'),
     path('pieza/<int:pk>/', views.pieza_detalle, name='pieza_detalle'),
     path('registrar_movimiento/', views.registrar_movimiento, name='registrar_movimiento'),
+    path('lotes/registrar/', views.registrar_lote, name='registrar_lote'),
+    path('precios/registrar/', views.registrar_precio, name='registrar_precio'),
 ]
 

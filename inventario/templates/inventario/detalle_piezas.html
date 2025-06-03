@@ -13,7 +13,16 @@
             <p class="card-text"><strong>Ubicación:</strong> {{ pieza.ubicacion }}</p>
             <p class="card-text"><strong>Cantidad:</strong> {{ pieza.cantidad }}</p>
         </div>
+        
+        
+        {% if pieza.requiere_vencimiento %}
+    <a href="{% url 'registrar_lote' %}?pieza_id={{ pieza.id }}" class="btn btn-primary mt-3">
+        <i class="bi bi-plus-circle me-1"></i>Registrar Lote
+    </a>
+{% endif %}
     </div>
     <a href="{% url 'listar_piezas' %}"  class="btn btn-secondary mt-3">Volver al Inventario</a>
 </div>
+
+
 {% endblock %}
