@@ -2,24 +2,30 @@ from datetime import timedelta, timezone
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
+
+
+class Ubicacion(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    
+    def __str__(self):
+        return self.nombre
+
+
 class Pieza(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True)
     numero_serie = models.CharField(max_length=100, unique=True)
-    ubicacion = models.CharField(max_length=100)
+    ubicacion = models.ForeignKey(Ubicacion, on_delete=models.SET_NULL, null=True)
+    categoria = models.ForeignKey('Categoria', on_delete=models.SET_NULL, null=True, blank=True)
+    proveedores = models.ManyToManyField('Proveedor', blank=True)
     cantidad = models.PositiveIntegerField(default=0)
     stock_minimo = models.PositiveIntegerField(default=1)
     requiere_vencimiento = models.BooleanField(default=False)
-
-    @property
-    def cantidad_total(self):
-        return sum(lote.cantidad for lote in self.lotes.all())
+    imagen = models.ImageField(upload_to='imagenes_piezas/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.nombre} ({self.numero_serie})"
-    
-    def esta_en_stock_bajo(self):
-        return self.cantidad <= self.stock_minimo
+
 
 TIPO_MOVIMIENTO_CHOICES = [
     ('entrada', 'Entrada'),
@@ -57,7 +63,23 @@ class Lote(models.Model):
 
     def __str__(self):
         return f"Lote {self.codigo_lote} - {self.pieza.nombre}"
-    
+
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+
+
+class Proveedor(models.Model):
+    nombre = models.CharField(max_length=100)
+    contacto = models.CharField(max_length=100, blank=True)
+    condiciones_pago = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.nombre 
+
+
 
 class HistorialPrecio(models.Model):
     pieza = models.ForeignKey(Pieza, on_delete=models.CASCADE, related_name='precios')

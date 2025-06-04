@@ -4,9 +4,10 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Profile
+from inventario.models import MovimientoInventario
 from .forms import UsuarioForm
 from django.contrib.auth.models import User
-from inventario.models import Pieza  
+from inventario.models import Pieza 
 from django.db import models
 
 # Login
@@ -35,6 +36,8 @@ def dashboard_view(request):
         profile = request.user.profile
         piezas_stock_bajo = Pieza.objects.filter(cantidad__lte=models.F('stock_minimo')).count()
         stock_bajo = Pieza.objects.filter(cantidad__lte=models.F("stock_minimo"))
+        ubicaciones_distintas = Pieza.objects.values('ubicacion').distinct().count()
+        movimientos_totales = MovimientoInventario.objects.count()
             
     except Profile.DoesNotExist:
         # Si el perfil no existe, desconectamos al usuario
@@ -50,6 +53,8 @@ def dashboard_view(request):
         'total_piezas': Pieza.objects.count(),
         'piezas_stock_bajo': piezas_stock_bajo,
         'stock_bajo': stock_bajo,
+        'ubicaciones_distintas': ubicaciones_distintas,
+        'movimientos_totales': movimientos_totales,
 
     }
     return render(request, 'authentication/dashboard.html', context)

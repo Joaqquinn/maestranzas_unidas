@@ -128,3 +128,6 @@ LOGIN_REDIRECT_URL = '/auth/dashboard/'  # Después del login
 
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
