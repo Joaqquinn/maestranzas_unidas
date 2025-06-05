@@ -1,10 +1,12 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
-from .models import HistorialPrecio, Pieza, MovimientoInventario
-from .forms import MovimientoInventarioForm,LoteForm, HistorialPrecioForm, PiezaConPrecioForm
+from .models import HistorialPrecio, Pieza, MovimientoInventario, Lote, Categoria, Proveedor, Ubicacion
+from .forms import MovimientoInventarioForm,LoteForm, HistorialPrecioForm, PiezaForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .filters import PiezaFilter
+
 
 # Create your views here.   
 
@@ -13,20 +15,13 @@ def home(request):
 
 class PiezaCreateView(CreateView):
     model = Pieza
-    form_class = PiezaConPrecioForm
-    template_name = 'inventario/pieza_form.html'
+    form_class = PiezaForm
+    template_name = 'inventario/registrar_pieza.html'
     success_url = reverse_lazy('dashboard')
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-
-        # Crear historial de precio automáticamente
-        HistorialPrecio.objects.create(
-            pieza=self.object,
-            precio=form.cleaned_data['precio']
-        )
-
-        return response
+        self.object = form.save()
+        return super().form_valid(form)
 
 @login_required
 def listar_piezas(request):
@@ -93,3 +88,24 @@ def registrar_precio(request):
         form = HistorialPrecioForm(initial={'pieza': pieza}) if pieza else HistorialPrecioForm()
 
     return render(request, 'registrar_precio.html', {'form': form})
+
+def lista_piezas(request):
+    queryset = Pieza.objects.select_related('categoria', 'ubicacion').all()
+    filtro = PiezaFilter(request.GET, queryset=queryset)
+    
+    context = {
+        'filter': filtro,
+        'piezas': filtro.qs
+    }
+    return render(request, 'inventario/listar_piezas.html', context)
+@login_required
+def registrar_pieza(request):
+    if request.method == 'POST':
+        form = PiezaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Pieza registrada correctamente.')
+            return redirect('listar_piezas')  # Asegúrate de tener esta vista o cámbiala
+    else:
+        form = PiezaForm()
+    return render(request, 'inventario/registrar_pieza.html', {'form': form})

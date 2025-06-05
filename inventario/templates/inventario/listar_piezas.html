@@ -1,9 +1,14 @@
 {% extends 'authentication/base.html' %}
+{% load widget_tweaks %}
+
 
 
 {% block title %}Listado de Piezas{% endblock %}
 
 {% block content %}
+
+<!-- DEBUG -->
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'dashboard' %}">
@@ -27,19 +32,48 @@
     </div>
 </nav>
 
-
 <div class="container mt-4">
     <h3 class="mb-4">Listado de Piezas Registradas</h3>
 
+    <div class="debug-info" style="background: #f8f9fa; padding: 10px; margin: 10px 0;">
+    <h5>Debug Info:</h5>
+    <p>Filtro object: {{ filtro }}</p>
+    <p>Form: {{ filtro.form }}</p>
+    <p>Categorías disponibles: {{ filtro.filters.categoria.queryset.count }}</p>
+    <p>Ubicaciones disponibles: {{ filtro.filters.ubicacion.queryset.count }}</p>
+</div>
+
+    <!-- FILTRO POR CATEGORÍA Y UBICACIÓN -->
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-3">
+        <label for="{{ filtro.form.categoria.id_for_label }}" class="form-label">Categoría</label>
+        {{ filtro.form.categoria|add_class:"form-select" }}
+    </div>
+
+    <div class="col-md-3">
+        <label for="{{ filtro.form.ubicacion.id_for_label }}" class="form-label">Ubicación</label>
+        {{ filtro.form.ubicacion|add_class:"form-select" }}
+    </div>
+
+    <div class="col-md-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">Aplicar filtros</button>
+    </div>
+    
+    <div class="col-md-3 d-flex align-items-end">
+        <a href="?" class="btn btn-outline-secondary w-100">Limpiar filtros</a>
+    </div>
+</form>
+
+
     {% if piezas %}
     <table class="table table-striped table-hover">
+        
         <thead class="table-dark">
             <tr>
                 <th>Nombre</th>
                 <th>Número de Serie</th>
                 <th>Ubicación</th>
                 <th>Cantidad</th>
-                
             </tr>
         </thead>
         <tbody>
@@ -50,16 +84,14 @@
                 <td>{{ pieza.ubicacion }}</td>
                 <td>
                     {{ pieza.cantidad }}
-    {% if pieza.cantidad <= pieza.stock_minimo %}
-        <i class="bi bi-exclamation-triangle-fill text-danger ms-2"
-           data-bs-toggle="tooltip"
-           data-bs-placement="top"
-           title="Stock por debajo del mínimo">
-        </i>
-    {% endif %}
-                    
+                    {% if pieza.cantidad <= pieza.stock_minimo %}
+                        <i class="bi bi-exclamation-triangle-fill text-danger ms-2"
+                           data-bs-toggle="tooltip"
+                           data-bs-placement="top"
+                           title="Stock por debajo del mínimo">
+                        </i>
+                    {% endif %}
                 </td>
-
             </tr>
             {% endfor %}
         </tbody>

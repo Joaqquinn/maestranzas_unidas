@@ -7,13 +7,20 @@ class MovimientoInventarioForm(forms.ModelForm):
         model = MovimientoInventario
         fields = ['pieza', 'tipo', 'cantidad', 'observacion']
 
-class PiezaConPrecioForm(forms.ModelForm):
-    precio = forms.DecimalField(label="Precio de compra", required=True)
+class PiezaForm(forms.ModelForm):
 
     class Meta:
         model = Pieza
-        fields = ['nombre', 'descripcion', 'numero_serie', 'ubicacion', 'cantidad', 'stock_minimo']
-
+        fields = [
+            'nombre', 'descripcion', 'numero_serie', 'ubicacion', 
+            'categoria', 'proveedores', 'cantidad', 'stock_minimo', 
+            'requiere_vencimiento'
+        ]
+        widgets = {
+            'descripcion': forms.Textarea(attrs={'rows': 3}),
+        }
+       
+                                                                                                                                                                                                                                                     
 class LoteForm(forms.ModelForm):
     class Meta:
         model = Lote
