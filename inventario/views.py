@@ -23,10 +23,31 @@ class PiezaCreateView(CreateView):
         self.object = form.save()
         return super().form_valid(form)
 
-@login_required
-def listar_piezas(request):
-    piezas = Pieza.objects.all()
-    return render(request, 'inventario/listar_piezas.html', {'piezas': piezas})
+
+def lista_piezas(request): # Cambiamos el nombre para reflejar 'Pieza'
+    piezas_list = Pieza.objects.all() # Usamos el modelo Pieza
+    categorias = Categoria.objects.all()
+    ubicaciones = Ubicacion.objects.all()
+
+    # Obtener los parámetros de filtrado de la URL (GET request)
+    categoria_id = request.GET.get('categoria')
+    ubicacion_id = request.GET.get('ubicacion')
+
+    # Aplicar filtros si los parámetros están presentes
+    if categoria_id:
+        piezas_list = piezas_list.filter(categoria__id=categoria_id) # Filtra por el ID de la categoría de la Pieza
+
+    if ubicacion_id:
+        piezas_list = piezas_list.filter(ubicacion__id=ubicacion_id) # Filtra por el ID de la ubicación de la Pieza
+
+    context = {
+        'piezas': piezas_list, # Cambiamos 'productos' por 'piezas'
+        'categorias': categorias,
+        'ubicaciones': ubicaciones,
+        'categoria_seleccionada': categoria_id,
+        'ubicacion_seleccionada': ubicacion_id
+    }
+    return render(request, 'inventario/listar_piezas.html', context) # Ajusta el path a tu template
 
 
 def pieza_detalle(request, pk):
@@ -89,15 +110,9 @@ def registrar_precio(request):
 
     return render(request, 'registrar_precio.html', {'form': form})
 
-def lista_piezas(request):
-    queryset = Pieza.objects.select_related('categoria', 'ubicacion').all()
-    filtro = PiezaFilter(request.GET, queryset=queryset)
-    
-    context = {
-        'filter': filtro,
-        'piezas': filtro.qs
-    }
-    return render(request, 'inventario/listar_piezas.html', context)
+
+
+
 @login_required
 def registrar_pieza(request):
     if request.method == 'POST':

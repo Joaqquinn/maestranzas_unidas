@@ -1,1 +1,28 @@
-venv
+# Entornos virtuales
+venv/
+env/
+.venv/
+
+# Archivos de configuración local
+.env
+
+# Archivos generados por Django
+*.pyc
+__pycache__/
+db.sqlite3
+/media/
+/static/
+
+# Archivos específicos de IDE
+.idea/
+.vscode/
+
+# Archivos de log
+*.log
+
+# Otros archivos
+*.pot
+.coverage
+.tox/
+.nox/
+.mypy_cache/
