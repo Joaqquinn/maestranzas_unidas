@@ -110,13 +110,21 @@ def registrar_precio(request):
 
     return render(request, 'registrar_precio.html', {'form': form})
 
-
-
+def editar_pieza(request, pk):
+    pieza = get_object_or_404(Pieza, pk=pk)
+    if request.method == 'POST':
+        form = PiezaForm(request.POST, request.FILES, instance=pieza)
+        if form.is_valid():
+            form.save()
+            return redirect('pieza_detalle', pk=pieza.pk)
+    else:
+        form = PiezaForm(instance=pieza)
+    return render(request, 'inventario/editar_pieza.html', {'form': form, 'pieza': pieza})
 
 @login_required
 def registrar_pieza(request):
     if request.method == 'POST':
-        form = PiezaForm(request.POST)
+        form = PiezaForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request, 'Pieza registrada correctamente.')

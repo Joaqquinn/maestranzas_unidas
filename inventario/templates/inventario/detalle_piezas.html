@@ -1,28 +1,53 @@
 {% extends 'authentication/base.html' %}
 
 {% block title %}Detalle de Pieza{% endblock %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Detalle de la Pieza</h2>
+    
+
     <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">{{ pieza.nombre }}</h5>
-            <p class="card-text"><strong>Descripción:</strong> {{ pieza.descripcion }}</p>
-            <p class="card-text"><strong>Número de Serie:</strong> {{ pieza.numero_serie }}</p>
-            <p class="card-text"><strong>Ubicación:</strong> {{ pieza.ubicacion }}</p>
-            <p class="card-text"><strong>Cantidad:</strong> {{ pieza.cantidad }}</p>
+    <div class="row g-0">
+        <!-- Columna izquierda: Detalles -->
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">{{ pieza.nombre }}</h5>
+                <p class="card-text"><strong>Descripción:</strong> {{ pieza.descripcion }}</p>
+                <p class="card-text"><strong>Número de Serie:</strong> {{ pieza.numero_serie }}</p>
+                <p class="card-text"><strong>Ubicación:</strong> {{ pieza.ubicacion }}</p>
+                <p class="card-text"><strong>Cantidad:</strong> {{ pieza.cantidad }}</p>
+                <p class="card-text"><strong>Categoría:</strong> {{ pieza.categoria }}</p>
+                <p class="card-text"><strong>Stock Mínimo:</strong> {{ pieza.stock_minimo }}</p>
+
+                {% if pieza.requiere_vencimiento %}
+                    <p class="card-text"><strong>Fecha de Vencimiento:</strong> {{ pieza.fecha_vencimiento|date:"d/m/Y" }}</p>
+
+                {% endif %}
+            </div>
         </div>
-        
-        
-        {% if pieza.requiere_vencimiento %}
-    <a href="{% url 'registrar_lote' %}?pieza_id={{ pieza.id }}" class="btn btn-primary mt-3">
-        <i class="bi bi-plus-circle me-1"></i>Registrar Lote
-    </a>
-{% endif %}
+
+        <!-- Columna derecha: Imagen -->
+        <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
+            {% if pieza.imagen %}
+                <img src="{{ pieza.imagen.url }}" class="img-fluid rounded" alt="Imagen de {{ pieza.nombre }}" style="max-height: 250px;">
+            {% else %}
+                <img src="{% static 'img/no-image.png' %}" class="img-fluid rounded" alt="Sin imagen" style="max-height: 250px;">
+            {% endif %}
+        </div>
     </div>
-    <a href="{% url 'listar_piezas' %}"  class="btn btn-secondary mt-3">Volver al Inventario</a>
 </div>
+    
+    <a href="{% url 'listar_piezas' %}"  class="btn btn-secondary mt-3">Volver al Inventario</a>
+
+    <a href="{% url 'editar_pieza' pieza.id %}" class="btn btn-warning mt-3">
+    <i class="bi bi-pencil-square me-1"></i>Editar Pieza
+</a>
+
+</div>
+
+
+
 
 
 {% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Editar Pieza{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">Editar Pieza: {{ pieza.nombre }}</h2>
+
+    <form method="post" enctype="multipart/form-data" class="border p-4 shadow-sm bg-light rounded">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-6">
+                {{ form.nombre.label_tag }} {{ form.nombre|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.numero_serie.label_tag }} {{ form.numero_serie|add_class:"form-control" }}
+            </div>
+            <div class="col-12">
+                {{ form.descripcion.label_tag }} {{ form.descripcion|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.ubicacion.label_tag }} {{ form.ubicacion|add_class:"form-select" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.categoria.label_tag }} {{ form.categoria|add_class:"form-select" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.cantidad.label_tag }} {{ form.cantidad|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.stock_minimo.label_tag }} {{ form.stock_minimo|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.proveedores.label_tag }} {{ form.proveedores|add_class:"form-select" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.requiere_vencimiento.label_tag }} {{ form.requiere_vencimiento|add_class:"form-check-input ms-2" }}
+            </div>
+            <div class="col-md-6" id="vencimiento-campo">
+                {{ form.fecha_vencimiento.label_tag }} {{ form.fecha_vencimiento|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.imagen.label_tag }} {{ form.imagen|add_class:"form-control" }}
+                {% if pieza.imagen %}
+                    <div class="mt-2">
+                        <img src="{{ pieza.imagen.url }}" class="img-thumbnail" style="max-height: 120px;">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-4 text-end">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-save me-1"></i> Guardar Cambios
+            </button>
+            <a href="{% url 'pieza_detalle' pieza.id %}" class="btn btn-secondary ms-2">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<!-- JavaScript para mostrar u ocultar fecha de vencimiento -->
+
+<style>
+  #vencimiento-campo {
+    display: none;
+  }
+</style>
+{% endblock %}

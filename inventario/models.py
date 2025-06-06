@@ -21,10 +21,15 @@ class Pieza(models.Model):
     cantidad = models.PositiveIntegerField(default=0)
     stock_minimo = models.PositiveIntegerField(default=1)
     requiere_vencimiento = models.BooleanField(default=False)
+    fecha_vencimiento = models.DateField(null=True, blank=True)  # <- aquí
+
     imagen = models.ImageField(upload_to='imagenes_piezas/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.nombre} ({self.numero_serie})"
+    
+    def es_consumible(self):
+        return self.categoria.nombre.lower() == "Consumible"
 
 
 TIPO_MOVIMIENTO_CHOICES = [

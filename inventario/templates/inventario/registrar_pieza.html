@@ -1,4 +1,5 @@
 {% extends 'authentication/base.html' %}
+{% load widget_tweaks %}
 
 {% block title %}Nueva Pieza{% endblock %}
 
@@ -26,10 +27,82 @@
     </div>
 </nav>
 
-<h2>Registrar Nueva Pieza</h2>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Guardar</button>
-</form>
+
+
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">Registrar Nueva Pieza</h2>
+
+    <form method="post" enctype="multipart/form-data" class="border p-4 shadow-sm bg-light rounded">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-md-6">
+                {{ form.nombre.label_tag }} {{ form.nombre|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.numero_serie.label_tag }} {{ form.numero_serie|add_class:"form-control" }}
+            </div>
+            <div class="col-12">
+                {{ form.descripcion.label_tag }} {{ form.descripcion|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.ubicacion.label_tag }} {{ form.ubicacion|add_class:"form-select" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.categoria.label_tag }} {{ form.categoria|add_class:"form-select" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.cantidad.label_tag }} {{ form.cantidad|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.stock_minimo.label_tag }} {{ form.stock_minimo|add_class:"form-control" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.proveedores.label_tag }} {{ form.proveedores|add_class:"form-select" }}
+            </div>
+            <div class="col-md-6">
+                {{ form.requiere_vencimiento.label_tag }} {{ form.requiere_vencimiento|add_class:"form-check-input ms-2" }}
+            </div>
+            
+            <div class="col-md-6" id="vencimiento-campo">
+                 {{ form.fecha_vencimiento.label_tag }} {{ form.fecha_vencimiento|add_class:"form-control" }}
+            </div>
+
+            <div class="col-md-6">
+                {{ form.imagen.label_tag }} {{ form.imagen|add_class:"form-control" }}
+            </div>
+
+
+        <div class="mt-4 text-end">
+            <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle me-1"></i> Guardar Pieza
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const categoriaSelect = document.getElementById("id_categoria");
+    const vencimientoDiv = document.getElementById("vencimiento-campo");
+
+    function toggleVencimiento() {
+        const selectedText = categoriaSelect.options[categoriaSelect.selectedIndex].text.toLowerCase();
+        if (selectedText.includes("consumible")) {
+            vencimientoDiv.style.display = "block";
+        } else {
+            vencimientoDiv.style.display = "none";
+            const input = document.getElementById("id_fecha_vencimiento");
+            if (input) input.value = "";
+        }
+    }
+
+    // Ejecutar al cargar
+    toggleVencimiento();
+
+    // Ejecutar al cambiar selección
+    categoriaSelect.addEventListener("change", toggleVencimiento);
+});
+</script>
+
 {% endblock %}

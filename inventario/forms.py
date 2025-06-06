@@ -14,11 +14,40 @@ class PiezaForm(forms.ModelForm):
         fields = [
             'nombre', 'descripcion', 'numero_serie', 'ubicacion', 
             'categoria', 'proveedores', 'cantidad', 'stock_minimo', 
-            'requiere_vencimiento'
+            'requiere_vencimiento', 'fecha_vencimiento', 'imagen'
         ]
         widgets = {
             'descripcion': forms.Textarea(attrs={'rows': 3}),
+            'fecha_vencimiento': forms.DateInput(attrs={'type': 'date'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    # Solo ocultar si ya existe el campo
+        if 'fecha_vencimiento' in self.fields:
+            if 'categoria' in self.data:
+                cat_id = self.data.get('categoria')
+                try:
+                    from .models import Categoria
+                    cat = Categoria.objects.get(id=cat_id)
+                    if cat.nombre.lower() != 'consumible':
+                        self.fields['fecha_vencimiento'].widget = forms.HiddenInput()
+                except Categoria.DoesNotExist:
+                    pass
+            elif self.instance.pk:
+                if self.instance.categoria and self.instance.categoria.nombre.lower() != 'consumible':
+                    self.fields['fecha_vencimiento'].widget = forms.HiddenInput()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        categoria = cleaned_data.get('categoria')
+        fecha_vencimiento = cleaned_data.get('fecha_vencimiento')
+
+        if categoria and categoria.nombre.lower() == 'consumible' and not fecha_vencimiento:
+            self.add_error('fecha_vencimiento', 'Este campo es obligatorio para piezas consumibles.')
+
+
        
                                                                                                                                                                                                                                                      
 class LoteForm(forms.ModelForm):

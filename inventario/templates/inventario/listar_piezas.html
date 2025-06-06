@@ -1,5 +1,6 @@
 {% extends 'authentication/base.html' %}
 {% load widget_tweaks %}
+{% load static %}
 
 
 
@@ -32,65 +33,100 @@
     </div>
 </nav>
 
-<form method="GET" action="{% url 'listar_piezas' %}"> {# Ajusta el nombre de la URL #}
-    <label for="categoria">Categoría:</label>
-    <select name="categoria" id="categoria">
-        <option value="">Todas</option>
-        {% for cat in categorias %}
-            <option value="{{ cat.id }}" {% if cat.id|stringformat:"s" == categoria_seleccionada %}selected{% endif %}>
-                {{ cat.nombre }}
-            </option>
-        {% endfor %}
-    </select>
+<div class="container">
 
-    <label for="ubicacion">Ubicación:</label>
-    <select name="ubicacion" id="ubicacion">
-        <option value="">Todas</option>
-        {% for ubi in ubicaciones %}
-            <option value="{{ ubi.id }}" {% if ubi.id|stringformat:"s" == ubicacion_seleccionada %}selected{% endif %}>
-                {{ ubi.nombre }}
-            </option>
-        {% endfor %}
-    </select>
+    <!-- Filtros -->
+    <form method="GET" class="row g-3 align-items-end mb-4">
+        <div class="col-md-5">
+            <label for="categoria" class="form-label">Categoría</label>
+            <select name="categoria" id="categoria" class="form-select">
+                <option value="">Todas</option>
+                {% for cat in categorias %}
+                    <option value="{{ cat.id }}" {% if cat.id|stringformat:"s" == categoria_seleccionada %}selected{% endif %}>
+                        {{ cat.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
 
-    <button type="submit">Filtrar</button>
-</form>
+        <div class="col-md-5">
+            <label for="ubicacion" class="form-label">Ubicación</label>
+            <select name="ubicacion" id="ubicacion" class="form-select">
+                <option value="">Todas</option>
+                {% for ubi in ubicaciones %}
+                    <option value="{{ ubi.id }}" {% if ubi.id|stringformat:"s" == ubicacion_seleccionada %}selected{% endif %}>
+                        {{ ubi.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        
+        <div class="col-md-2 text-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-funnel-fill me-1"></i>Filtrar
+            </button>
+        </div>
+    </form>
+
 
 
 
 
 
     {% if piezas %}
-    <table class="table table-striped table-hover">
-        
-        <thead class="table-dark">
-            <tr>
-                <th>Nombre</th>
-                <th>Número de Serie</th>
-                <th>Ubicación</th>
-                <th>Cantidad</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for pieza in piezas %}
-            <tr>
-                <td><a href="{% url 'pieza_detalle' pk=pieza.id %}"> {{ pieza.nombre }}</a></td>
-                <td>{{ pieza.numero_serie }}</td>
-                <td>{{ pieza.ubicacion }}</td>
-                <td>
-                    {{ pieza.cantidad }}
-                    {% if pieza.cantidad <= pieza.stock_minimo %}
-                        <i class="bi bi-exclamation-triangle-fill text-danger ms-2"
-                           data-bs-toggle="tooltip"
-                           data-bs-placement="top"
-                           title="Stock por debajo del mínimo">
-                        </i>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<table class="table table-borderless align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th></th>
+            <th>Imagen</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th class="text-end">Cantidad</th>
+            <th class="text-end">Stock Mínimo</th>
+            <th>Categoría</th>
+            <th>Vencimiento</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pieza in piezas %}
+        <tr class="{% cycle '' 'table-light' %}">
+            <td><input type="checkbox" /></td>
+            <td>
+                {% if pieza.imagen %}
+                    <img src="{{ pieza.imagen.url }}" alt="Imagen" style="width: 40px; height: auto;">
+                {% else %}
+                    <img src="{% static 'img/no-image.png' %}" alt="Sin imagen" style="width: 40px; height: auto;">
+                {% endif %}
+            </td>
+            <td class="fw-bold text-uppercase text-orange">{{ pieza.numero_serie }}</td>
+            <td>
+                <a href="{% url 'pieza_detalle' pk=pieza.id %}" class="text-decoration-none fw-semibold">
+                    {{ pieza.nombre }}
+                </a>
+            </td>
+            <td class="text-end {% if pieza.cantidad <= pieza.stock_minimo %}text-danger fw-bold{% endif %}">
+                {{ pieza.cantidad }}
+                {% if pieza.cantidad <= pieza.stock_minimo %}
+                    <i class="bi bi-exclamation-triangle-fill ms-2"
+                       data-bs-toggle="tooltip"
+                       title="Stock bajo mínimo">
+                    </i>
+                {% endif %}
+            </td>
+            <td class="text-end">{{ pieza.stock_minimo }}</td>
+            <td>{{ pieza.categoria.nombre }}</td>
+            <td>
+                {% if pieza.requiere_vencimiento %}
+                    {{ pieza.fecha_vencimiento|date:"d/m/Y" }}
+                {% else %}
+                    <span class="text-muted">No requiere</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
     {% else %}
     <p class="text-muted">No hay piezas registradas.</p>
     {% endif %}
