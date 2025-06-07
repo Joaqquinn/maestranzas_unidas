@@ -1,0 +1,25 @@
+{% extends 'authentication/base.html' %}
+{% block title %}Eliminar Categoría{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-danger">¿Eliminar Categoría?</h2>
+
+    {% if piezas_asociadas > 0 %}
+        <div class="alert alert-warning">
+            No puedes eliminar esta categoría porque está siendo usada por <strong>{{ piezas_asociadas }}</strong> pieza(s).
+        </div>
+        <a href="{% url 'listar_categorias' %}" class="btn btn-secondary">Volver</a>
+    {% else %}
+        <p>¿Estás seguro de que deseas eliminar la categoría <strong>{{ categoria.nombre }}</strong>?</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash3-fill me-1"></i> Eliminar
+            </button>
+            <a href="{% url 'listar_categorias' %}" class="btn btn-secondary ms-2">Cancelar</a>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

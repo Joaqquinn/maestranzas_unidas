@@ -86,6 +86,7 @@
             <th class="text-end">Stock Mínimo</th>
             <th>Categoría</th>
             <th>Vencimiento</th>
+            <th>Ubicación</th>
         </tr>
     </thead>
     <tbody>
@@ -123,6 +124,7 @@
                     <span class="text-muted">No requiere</span>
                 {% endif %}
             </td>
+            <td>{{ pieza.ubicacion.nombre }}</td>
         </tr>
         {% endfor %}
     </tbody>

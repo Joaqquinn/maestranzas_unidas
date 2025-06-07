@@ -2,10 +2,11 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 from .models import HistorialPrecio, Pieza, MovimientoInventario, Lote, Categoria, Proveedor, Ubicacion
-from .forms import MovimientoInventarioForm,LoteForm, HistorialPrecioForm, PiezaForm
+from .forms import MovimientoInventarioForm,LoteForm, HistorialPrecioForm, PiezaForm, UbicacionForm,CategoriaForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .filters import PiezaFilter
+from django.db.models import Count
 
 
 # Create your views here.   
@@ -48,6 +49,75 @@ def lista_piezas(request): # Cambiamos el nombre para reflejar 'Pieza'
         'ubicacion_seleccionada': ubicacion_id
     }
     return render(request, 'inventario/listar_piezas.html', context) # Ajusta el path a tu template
+
+
+
+@login_required
+def listar_ubicaciones(request):
+    ubicaciones = Ubicacion.objects.all()
+    return render(request, 'ubicaciones/listar.html', {'ubicaciones': ubicaciones})
+
+@login_required
+def crear_ubicacion(request):
+    form = UbicacionForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('listar_ubicaciones')
+    return render(request, 'ubicaciones/form.html', {'form': form, 'accion': 'Crear'})
+
+@login_required
+def editar_ubicacion(request, pk):
+    ubicacion = get_object_or_404(Ubicacion, pk=pk)
+    form = UbicacionForm(request.POST or None, instance=ubicacion)
+    if form.is_valid():
+        form.save()
+        return redirect('listar_ubicaciones')
+    return render(request, 'inventario/form.html', {'form': form, 'accion': 'Editar'})
+
+
+@login_required
+def listar_categorias(request):
+    categorias = Categoria.objects.all()
+    return render(request, 'categorias/listar.html', {'categorias': categorias})
+
+@login_required
+def crear_categoria(request):
+    form = CategoriaForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('listar_categorias')
+    return render(request, 'categorias/form.html', {'form': form, 'accion': 'Crear'})
+
+@login_required
+def editar_categoria(request, pk):
+    categoria = get_object_or_404(Categoria, pk=pk)
+    form = CategoriaForm(request.POST or None, instance=categoria)
+    if form.is_valid():
+        form.save()
+        return redirect('listar_categorias')
+    return render(request, 'categorias/form.html', {'form': form, 'accion': 'Editar'})
+
+
+
+@login_required
+def eliminar_categoria(request, pk):
+    categoria = get_object_or_404(Categoria, pk=pk)
+
+    # Verifica si hay piezas asociadas
+    piezas_asociadas = categoria.pieza_set.count()  # relaciona con el modelo Pieza
+
+    if request.method == 'POST':
+        if piezas_asociadas > 0:
+            messages.error(request, 'No se puede eliminar la categoría porque hay piezas asociadas.')
+            return redirect('listar_categorias')
+        categoria.delete()
+        messages.success(request, 'Categoría eliminada correctamente.')
+        return redirect('listar_categorias')
+
+    return render(request, 'categorias/eliminar_confirmacion.html', {
+        'categoria': categoria,
+        'piezas_asociadas': piezas_asociadas
+    })
 
 
 def pieza_detalle(request, pk):

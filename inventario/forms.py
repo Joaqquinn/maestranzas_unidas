@@ -1,6 +1,5 @@
 from django import forms
-from .models import MovimientoInventario, Pieza,Lote, HistorialPrecio
-
+from .models import MovimientoInventario, Pieza,Lote, HistorialPrecio, Ubicacion, Categoria, Proveedor
 
 class MovimientoInventarioForm(forms.ModelForm):
     class Meta:
@@ -47,7 +46,15 @@ class PiezaForm(forms.ModelForm):
         if categoria and categoria.nombre.lower() == 'consumible' and not fecha_vencimiento:
             self.add_error('fecha_vencimiento', 'Este campo es obligatorio para piezas consumibles.')
 
+class UbicacionForm(forms.ModelForm):
+    class Meta:
+        model = Ubicacion
+        fields = ['nombre']
 
+class CategoriaForm(forms.ModelForm):
+    class Meta:
+        model = Categoria
+        fields = ['nombre']
        
                                                                                                                                                                                                                                                      
 class LoteForm(forms.ModelForm):
