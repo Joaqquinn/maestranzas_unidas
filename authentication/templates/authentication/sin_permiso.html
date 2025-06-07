@@ -1,0 +1,9 @@
+{% extends 'authentication/base.html' %}
+
+{% block content %}
+  <div class="alert alert-danger mt-5 text-center">
+    <h4>🚫 Acceso Denegado</h4>
+    <p>No tienes permiso para acceder a esta sección.</p>
+    <a href="{% url 'home' %}" class="btn btn-primary mt-3">Volver al inicio</a>
+  </div>
+{% endblock %}

@@ -23,15 +23,5 @@ class Profile(models.Model):
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} ({self.role})"
     
-    @property
-    def is_admin(self):
-        return self.role == 'admin_sistema'
-    
-    @property
-    def can_manage_inventory(self):
-        return self.role in ['admin_sistema', 'gestor_inventario']
-    
-    @property
-    def can_purchase(self):
-        return self.role in ['admin_sistema', 'comprador']
+
 

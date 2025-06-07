@@ -94,3 +94,4 @@ class HistorialPrecio(models.Model):
 
     def __str__(self):
         return f"{self.pieza.nombre} - ${self.precio} el {self.fecha}"
+

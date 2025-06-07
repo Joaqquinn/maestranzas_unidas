@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h2>📋 Dashboard Gerente de Proyectos</h2>
+  <p>Bienvenido/a, {{ user.get_full_name }}</p>
+  <ul>
+    <li>Asignación de recursos a proyectos</li>
+    <li>Seguimiento de consumo de materiales</li>
+    <li>Consulta de disponibilidad</li>
+  </ul>
+</div>
+{% endblock %}

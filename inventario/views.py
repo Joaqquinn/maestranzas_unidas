@@ -6,10 +6,31 @@ from .forms import MovimientoInventarioForm,LoteForm, HistorialPrecioForm, Pieza
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .filters import PiezaFilter
+from authentication.decorators import role_required  # ajusta el path según tu estructura
 from django.db.models import Count
 
 
 # Create your views here.   
+@role_required(['admin_sistema'])
+def dashboard_admin(request):
+    profile = request.user.profile
+    piezas_stock_bajo = Pieza.objects.filter(cantidad__lte=models.F('stock_minimo')).count()
+    stock_bajo = Pieza.objects.filter(cantidad__lte=models.F("stock_minimo"))
+    ubicaciones_distintas = Pieza.objects.values('ubicacion').distinct().count()
+    movimientos_totales = MovimientoInventario.objects.count()
+
+    context = {
+        'user': request.user,
+        'profile': profile,
+        'role_display': profile.get_role_display(),
+        'total_piezas': Pieza.objects.count(),
+        'piezas_stock_bajo': piezas_stock_bajo,
+        'stock_bajo': stock_bajo,
+        'ubicaciones_distintas': ubicaciones_distintas,
+        'movimientos_totales': movimientos_totales,
+    }
+
+    return render(request, 'inventario/admin.html', context)
 
 def home(request):
     return render(request, 'inventario/home.html')
@@ -191,7 +212,7 @@ def editar_pieza(request, pk):
         form = PiezaForm(instance=pieza)
     return render(request, 'inventario/editar_pieza.html', {'form': form, 'pieza': pieza})
 
-@login_required
+@role_required(['admin_sistema', 'gestor_inventario'])
 def registrar_pieza(request):
     if request.method == 'POST':
         form = PiezaForm(request.POST, request.FILES)

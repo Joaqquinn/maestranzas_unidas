@@ -1,0 +1,14 @@
+{% extends 'authentication/base.html' %}
+{% block title %}Registrar Usuario{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3><i class="bi bi-person-plus me-2"></i>Registrar nuevo usuario</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Crear Usuario</button>
+        <a href="{% url 'dashboard_admin' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

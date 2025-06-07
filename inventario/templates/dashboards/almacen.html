@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h2>🏬 Dashboard Almacén / Logística</h2>
+  <p>Bienvenido/a, {{ user.get_full_name }}</p>
+  <ul>
+    <li>Ubicación física de piezas</li>
+    <li>Búsqueda rápida de stock</li>
+    <li>Entrega de materiales</li>
+  </ul>
+</div>
+{% endblock %}

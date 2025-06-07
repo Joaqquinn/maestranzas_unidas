@@ -17,6 +17,7 @@ urlpatterns = [
     path('categorias/nueva/', views.crear_categoria, name='crear_categoria'),
     path('categorias/<int:pk>/editar/', views.editar_categoria, name='editar_categoria'),
     path('categorias/<int:pk>/eliminar/', views.eliminar_categoria, name='eliminar_categoria'),
+    path('dashboard/admin/', views.dashboard_admin, name='dashboard_admin'),
 
 ]
 
