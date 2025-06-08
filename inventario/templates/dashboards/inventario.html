@@ -1,12 +1,13 @@
-{% extends 'base.html' %}
+{% extends "authentication/base.html" %}
+
+{% block title %}
+    Inventario
+{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-  <h2>📦 Dashboard Gestor de Inventario</h2>
-  <p>Bienvenido/a, {{ user.get_full_name }}</p>
-  <ul>
-    <li>Registrar nuevas piezas</li>
-    <li>Actualizar cantidades</li>
-    <li>Registrar movimientos (entradas/salidas)</li>
-  </ul>
-</div>
+    <div class="container">
+        <h1>Inventario</h1>
+        <p>Bienvenido al panel de inventario.</p>
+        <p>Aquí puedes gestionar los productos y sus categorías.</p>
+    </div>
 {% endblock %}

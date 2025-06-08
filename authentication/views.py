@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -10,39 +11,36 @@ from django.contrib.auth.models import User
 from inventario.models import Pieza 
 from django.db import models
 from django.contrib.auth.decorators import login_required
-from authentication.decorators import role_required
+from .decorators import group_required
 
 
 # Login}
 
-def role_to_dashboard(role):
+def role_to_dashboard(group_name):
     dashboards = {
-        'admin_sistema': 'dashboard_admin',
-        'gestor_inventario': 'dashboard_inventario',
-        'comprador': 'dashboard_compras',
-        'almacen_logistica': 'dashboard_almacen',
-        'jefe_produccion': 'dashboard_produccion',
-        'auditor_inventario': 'dashboard_auditor',
-        'gerente_proyectos': 'dashboard_gerente',
-        'usuario_final': 'dashboard_usuario',
+        'Administrador del Sistema': 'admin_dashboard',
+        'Gestor de Inventario': 'gestor_dashboard',
+        'Comprador': 'comprador_dashboard',
+        'Almacén': 'almacen_dashboard',
+        'Jefe de Producción': 'produccion_dashboard',
+        'Auditor de Inventario': 'auditor_dashboard',
+        'Gerente de Proyectos': 'gerente_dashboard',
+        'Usuario Final': 'usuario_dashboard',
     }
-    return dashboards.get(role, 'sin_permiso')
+    return dashboards.get(group_name, 'sin_permiso')
 
 
-@role_required(['admin_sistema'])
+@group_required('Administrador del Sistema')
 def registrar_usuario(request):
     if request.method == 'POST':
         form = UsuarioRegistroForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.save()
-            messages.success(request, 'Usuario creado exitosamente.')
-            return redirect('dashboard_admin')
+            form.save()
+            messages.success(request, 'Usuario registrado correctamente.')
+            return redirect('home')  # Cambia esto según tu vista
     else:
         form = UsuarioRegistroForm()
-
     return render(request, 'authentication/registrar_usuario.html', {'form': form})
-
 
 
 def login_view(request):
@@ -56,8 +54,8 @@ def login_view(request):
             user = form.get_user()
             login(request, user)  # ← crea la sesión
 
-            role = user.profile.role # type: ignore
-            return redirect('dashboard')  # todos van al mismo, pero puedes cambiar según el rol
+            group = user.groups.first().name if user.groups.exists() else None # type: ignore
+            return redirect(role_to_dashboard(group))  # todos van al mismo, pero puedes cambiar según el rol
         else:
             messages.error(request, "Usuario o contraseña incorrectos.")
 
@@ -66,8 +64,8 @@ def login_view(request):
 # Dashboard
 @login_required
 def dashboard_view(request):
-    role = request.user.profile.role
-    return redirect(role_to_dashboard(role))
+    grupo = request.user.groups.first().name if request.user.groups.exists() else None
+    return redirect(role_to_dashboard(grupo))
 
 # Logout
 def logout_view(request):
@@ -75,57 +73,36 @@ def logout_view(request):
     messages.success(request, "Has cerrado sesión exitosamente.")
     return redirect('login')
 
-@login_required
-def crear_usuario_view(request):
-    if not request.user.profile.role == 'admin_sistema':
-        messages.error(request, "No tienes permiso para acceder a esta página.")
-        return redirect('dashboard')
-
-    if request.method == 'POST':
-        form = UsuarioForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = User.objects.create_user(username=username, password=password)
-          
-
-            messages.success(request, f"Usuario '{username}' creado con éxito.")
-            return redirect('crear_usuario')
-    else:
-        form = UsuarioForm()
-
-    return render(request, 'authentication/crear_usuario.html', {'form': form})
-
-@role_required(['admin_sistema'])
-def dashboard_admin(request):
+@group_required('Administrador del Sistema')
+def admin_dashboard(request):
     return render(request, 'dashboards/admin.html')
 
-@role_required(['gestor_inventario'])
-def dashboard_inventario(request):
-    return render(request, 'dashboards/inventario.html')
+@group_required('Gestor de Inventario')
+def gestor_dashboard(request):
+    return render(request, 'dashboards/gestor.html')
 
-@role_required(['comprador'])
-def dashboard_compras(request):
-    return render(request, 'dashboards/compras.html')
+@group_required('Comprador')
+def comprador_dashboard(request):
+    return render(request, 'dashboards/comprador.html')
 
-@role_required(['almacen_logistica'])
-def dashboard_almacen(request):
+@group_required('Almacén')
+def almacen_dashboard(request):
     return render(request, 'dashboards/almacen.html')
 
-@role_required(['jefe_produccion'])
-def dashboard_produccion(request):
+@group_required('Jefe de Producción')
+def produccion_dashboard(request):
     return render(request, 'dashboards/produccion.html')
 
-@role_required(['auditor_inventario'])
-def dashboard_auditor(request):
+@group_required('Auditor de Inventario')
+def auditor_dashboard(request):
     return render(request, 'dashboards/auditor.html')
 
-@role_required(['gerente_proyectos'])
-def dashboard_gerente(request):
+@group_required('Gerente de Proyectos')
+def gerente_dashboard(request):
     return render(request, 'dashboards/gerente.html')
 
-@role_required(['usuario_final'])
-def dashboard_usuario(request):
+@group_required('Usuario Final')
+def usuario_dashboard(request):
     return render(request, 'dashboards/usuario.html')
 
 def sin_permiso(request):

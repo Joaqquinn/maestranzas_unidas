@@ -1,18 +1,17 @@
 from django.shortcuts import redirect
 from functools import wraps
+from django.contrib.auth.decorators import user_passes_test
+from django.core.exceptions import PermissionDenied
 
-def role_required(allowed_roles=[]):
+
+def group_required(group_names):
+    if isinstance(group_names, str):
+        group_names = [group_names]
+
     def decorator(view_func):
-        @wraps(view_func)
-        def wrapper(request, *args, **kwargs):
-            if not request.user.is_authenticated:
-                return redirect('login')  # o la URL que uses
-
-            user_profile = getattr(request.user, 'profile', None)
-
-            if user_profile and user_profile.role in allowed_roles:
+        def _wrapped_view(request, *args, **kwargs):
+            if request.user.is_authenticated and request.user.groups.filter(name__in=group_names).exists():
                 return view_func(request, *args, **kwargs)
-
-            return redirect('sin_permiso')  # crea esta vista/template para mostrar mensaje de error
-        return wrapper
+            raise PermissionDenied
+        return _wrapped_view
     return decorator

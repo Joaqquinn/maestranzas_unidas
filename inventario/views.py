@@ -1,28 +1,31 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
+
+from authentication import models
 from .models import HistorialPrecio, Pieza, MovimientoInventario, Lote, Categoria, Proveedor, Ubicacion
 from .forms import MovimientoInventarioForm,LoteForm, HistorialPrecioForm, PiezaForm, UbicacionForm,CategoriaForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .filters import PiezaFilter
-from authentication.decorators import role_required  # ajusta el path según tu estructura
+from authentication.decorators import group_required  # ajusta el path según tu estructura
 from django.db.models import Count
 
 
+
 # Create your views here.   
-@role_required(['admin_sistema'])
+@group_required('Administrador del Sistema')
 def dashboard_admin(request):
     profile = request.user.profile
-    piezas_stock_bajo = Pieza.objects.filter(cantidad__lte=models.F('stock_minimo')).count()
-    stock_bajo = Pieza.objects.filter(cantidad__lte=models.F("stock_minimo"))
+    piezas_stock_bajo = Pieza.objects.filter(cantidad__lte=models.F('stock_minimo')).count() # type: ignore
+    stock_bajo = Pieza.objects.filter(cantidad__lte=models.F("stock_minimo")) # type: ignore
     ubicaciones_distintas = Pieza.objects.values('ubicacion').distinct().count()
     movimientos_totales = MovimientoInventario.objects.count()
 
     context = {
         'user': request.user,
         'profile': profile,
-        'role_display': profile.get_role_display(),
+        'role_display': request.user.groups.first().name if request.user.groups.exists() else "Sin rol",
         'total_piezas': Pieza.objects.count(),
         'piezas_stock_bajo': piezas_stock_bajo,
         'stock_bajo': stock_bajo,
@@ -212,7 +215,7 @@ def editar_pieza(request, pk):
         form = PiezaForm(instance=pieza)
     return render(request, 'inventario/editar_pieza.html', {'form': form, 'pieza': pieza})
 
-@role_required(['admin_sistema', 'gestor_inventario'])
+@group_required(['Administrador del Sistema', 'Gestor de Inventario'])
 def registrar_pieza(request):
     if request.method == 'POST':
         form = PiezaForm(request.POST, request.FILES)
