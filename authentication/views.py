@@ -13,21 +13,12 @@ from django.db import models
 from django.contrib.auth.decorators import login_required
 from .decorators import group_required
 
+from django.db.models import F 
 
-# Login}
+# Login
 
 def role_to_dashboard(group_name):
-    dashboards = {
-        'Administrador del Sistema': 'admin_dashboard',
-        'Gestor de Inventario': 'gestor_dashboard',
-        'Comprador': 'comprador_dashboard',
-        'Almacén': 'almacen_dashboard',
-        'Jefe de Producción': 'produccion_dashboard',
-        'Auditor de Inventario': 'auditor_dashboard',
-        'Gerente de Proyectos': 'gerente_dashboard',
-        'Usuario Final': 'usuario_dashboard',
-    }
-    return dashboards.get(group_name, 'sin_permiso')
+    return '/dashboard/'
 
 
 @group_required('Administrador del Sistema')
@@ -73,37 +64,6 @@ def logout_view(request):
     messages.success(request, "Has cerrado sesión exitosamente.")
     return redirect('login')
 
-@group_required('Administrador del Sistema')
-def admin_dashboard(request):
-    return render(request, 'dashboards/admin.html')
-
-@group_required('Gestor de Inventario')
-def gestor_dashboard(request):
-    return render(request, 'dashboards/gestor.html')
-
-@group_required('Comprador')
-def comprador_dashboard(request):
-    return render(request, 'dashboards/comprador.html')
-
-@group_required('Almacén')
-def almacen_dashboard(request):
-    return render(request, 'dashboards/almacen.html')
-
-@group_required('Jefe de Producción')
-def produccion_dashboard(request):
-    return render(request, 'dashboards/produccion.html')
-
-@group_required('Auditor de Inventario')
-def auditor_dashboard(request):
-    return render(request, 'dashboards/auditor.html')
-
-@group_required('Gerente de Proyectos')
-def gerente_dashboard(request):
-    return render(request, 'dashboards/gerente.html')
-
-@group_required('Usuario Final')
-def usuario_dashboard(request):
-    return render(request, 'dashboards/usuario.html')
 
 def sin_permiso(request):
     return render(request, 'authentication/sin_permiso.html')

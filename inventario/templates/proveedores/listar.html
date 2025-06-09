@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Listado de Proveedores</h2>
+<a class="btn btn-success" href="{% url 'crear_proveedor' %}">Agregar Proveedor</a>
+<table class="table mt-3">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Contacto</th>
+      <th>Condiciones de Pago</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for proveedor in proveedores %}
+    <tr>
+      <td>{{ proveedor.nombre }}</td>
+      <td>{{ proveedor.contacto }}</td>
+      <td>{{ proveedor.condiciones_pago }}</td>
+      <td>
+        <a class="btn btn-primary btn-sm" href="{% url 'editar_proveedor' proveedor.id %}">Editar</a>
+        <a class="btn btn-danger btn-sm" href="{% url 'eliminar_proveedor' proveedor.id %}">Eliminar</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

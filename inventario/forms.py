@@ -1,5 +1,5 @@
 from django import forms
-from .models import MovimientoInventario, Pieza,Lote, HistorialPrecio, Ubicacion, Categoria, Proveedor
+from .models import MovimientoInventario, Pieza,Lote, HistorialPrecio, Ubicacion, Categoria, Proveedor, Kit, KitItem
 
 class MovimientoInventarioForm(forms.ModelForm):
     class Meta:
@@ -56,7 +56,15 @@ class CategoriaForm(forms.ModelForm):
         model = Categoria
         fields = ['nombre']
        
-                                                                                                                                                                                                                                                     
+class ProveedorForm(forms.ModelForm):
+    class Meta:
+        model = Proveedor
+        fields = ['nombre', 'contacto', 'condiciones_pago']
+        widgets = {
+            'condiciones_pago': forms.Textarea(attrs={'rows': 3}),
+        }
+
+                                                                                                                                                                                                                                                        
 class LoteForm(forms.ModelForm):
     class Meta:
         model = Lote
@@ -74,3 +82,17 @@ class HistorialPrecioForm(forms.ModelForm):
     class Meta:
         model = HistorialPrecio
         fields = ['pieza', 'precio', 'proveedor']
+
+
+class KitForm(forms.ModelForm):
+    class Meta:
+        model = Kit
+        fields = ['nombre', 'descripcion']
+
+# Formset para agregar piezas a un kit
+KitItemFormSet = forms.inlineformset_factory(
+    Kit, KitItem,
+    fields=['pieza', 'cantidad'],
+    extra=1,
+    can_delete=True
+)

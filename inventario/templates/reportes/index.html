@@ -1,0 +1,84 @@
+{% extends 'authentication/base.html/base.html' %}
+{% block content %}
+<h2>Reportes Personalizados</h2>
+
+<h3 class="mt-4 text-danger">🔻 Stock bajo</h3>
+{% if piezas_stock_bajo %}
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr><th>Pieza</th><th>Cantidad</th><th>Stock mínimo</th></tr>
+  </thead>
+  <tbody>
+    {% for pieza in piezas_stock_bajo %}
+    <tr>
+      <td>{{ pieza.nombre }}</td>
+      <td>{{ pieza.cantidad }}</td>
+      <td>{{ pieza.stock_minimo }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No hay piezas con stock bajo.</p>
+{% endif %}
+
+<h3 class="mt-4 text-warning">⚠ Lotes próximos a vencer</h3>
+{% if lotes_por_vencer %}
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr><th>Pieza</th><th>Código Lote</th><th>Fecha Vencimiento</th></tr>
+  </thead>
+  <tbody>
+    {% for lote in lotes_por_vencer %}
+    <tr>
+      <td>{{ lote.pieza.nombre }}</td>
+      <td>{{ lote.codigo_lote }}</td>
+      <td>{{ lote.fecha_vencimiento }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No hay lotes próximos a vencer.</p>
+{% endif %}
+
+<h3 class="mt-4 text-danger">❌ Lotes vencidos</h3>
+{% if lotes_vencidos %}
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr><th>Pieza</th><th>Código Lote</th><th>Fecha Vencimiento</th></tr>
+  </thead>
+  <tbody>
+    {% for lote in lotes_vencidos %}
+    <tr>
+      <td>{{ lote.pieza.nombre }}</td>
+      <td>{{ lote.codigo_lote }}</td>
+      <td>{{ lote.fecha_vencimiento }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No hay lotes vencidos.</p>
+{% endif %}
+
+<h3 class="mt-4">🧾 Últimos movimientos</h3>
+<table class="table table-sm table-bordered">
+  <thead>
+    <tr><th>Fecha</th><th>Tipo</th><th>Pieza</th><th>Cantidad</th><th>Responsable</th></tr>
+  </thead>
+  <tbody>
+    {% for mov in movimientos %}
+    <tr>
+      <td>{{ mov.fecha }}</td>
+      <td>{{ mov.get_tipo_display }}</td>
+      <td>{{ mov.pieza.nombre }}</td>
+      <td>{{ mov.cantidad }}</td>
+      <td>{{ mov.responsable }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'exportar_reporte_excel' %}" class="btn btn-outline-success mb-4">📥 Descargar Reporte Excel</a>
+<a href="{% url 'exportar_reporte_pdf' %}" class="btn btn-outline-danger mb-4">📄 Descargar Reporte PDF</a>

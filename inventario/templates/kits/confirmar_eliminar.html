@@ -1,0 +1,9 @@
+{% extends 'authentication/base.html/base.html' %}
+{% block content %}
+<h2>¿Eliminar el kit "{{ kit.nombre }}"?</h2>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-danger">Eliminar</button>
+</form>
+<a href="{% url 'listar_kits' %}" class="btn btn-secondary mt-3">Cancelar</a>
+{% endblock %}

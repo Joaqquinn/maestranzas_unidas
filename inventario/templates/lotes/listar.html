@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Lotes registrados</h2>
+<a href="{% url 'agregar_lote' %}" class="btn btn-primary mb-3">Registrar nuevo lote</a>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Pieza</th>
+      <th>Código Lote</th>
+      <th>Cantidad</th>
+      <th>Fecha de Vencimiento</th>
+      <th>Vencido</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for lote in lotes %}
+    <tr {% if lote.esta_vencido %}class="table-danger"{% elif lote.proximo_a_vencer %}class="table-warning"{% endif %}>
+      <td>{{ lote.pieza.nombre }}</td>
+      <td>{{ lote.codigo_lote }}</td>
+      <td>{{ lote.cantidad }}</td>
+      <td>{{ lote.fecha_vencimiento|default:"No aplica" }}</td>
+      <td>
+        {% if lote.esta_vencido %}✔ Vencido{% elif lote.proximo_a_vencer %}⚠ Pronto a vencer{% else %}✅ Vigente{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

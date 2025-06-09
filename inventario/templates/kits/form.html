@@ -1,0 +1,21 @@
+{% extends 'authentication/base.html/base.html' %}
+{% block content %}
+<h2>{{ titulo }}</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <h4>Piezas del Kit:</h4>
+  {{ formset.management_form }}
+  <table class="table">
+    {% for form in formset %}
+    <tr>
+      <td>{{ form.pieza.label_tag }} {{ form.pieza }}</td>
+      <td>{{ form.cantidad.label_tag }} {{ form.cantidad }}</td>
+      <td>{{ form.DELETE }} Eliminar</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <button type="submit" class="btn btn-success">Guardar Kit</button>
+</form>
+<a href="{% url 'listar_kits' %}" class="btn btn-secondary mt-3">Volver</a>
+{% endblock %}

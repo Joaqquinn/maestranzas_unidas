@@ -1,0 +1,37 @@
+{% extends 'authentication/base.html/base.html' %}
+{% load static %}
+
+{% block title %}Lista de Kits{% endblock %}
+
+{% block styles %}
+{% block content %}
+<h2>Kits registrados</h2>
+<a href="{% url 'crear_kit' %}" class="btn btn-success mb-3">Nuevo Kit</a>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Piezas</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for kit in kits %}
+    <tr>
+      <td>{{ kit.nombre }}</td>
+      <td>{{ kit.descripcion }}</td>
+      <td>
+        {% for item in kit.kititem_set.all %}
+          - {{ item.pieza.nombre }} ({{ item.cantidad }})<br>
+        {% endfor %}
+      </td>
+      <td>
+        <a href="{% url 'editar_kit' kit.id %}" class="btn btn-primary btn-sm">Editar</a>
+        <a href="{% url 'eliminar_kit' kit.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

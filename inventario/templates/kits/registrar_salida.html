@@ -1,0 +1,25 @@
+{% extends 'authentication/base.htmlbase.html' %}
+{% block content %}
+<h2>Registrar salida de Kit</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="kit">Seleccione un kit:</label>
+    <select name="kit" class="form-control" required>
+      {% for kit in kits %}
+      <option value="{{ kit.id }}">{{ kit.nombre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-group mt-3">
+    <label for="cantidad">Cantidad de kits:</label>
+    <input type="number" name="cantidad" class="form-control" min="1" value="1" required>
+  </div>
+
+  <button type="submit" class="btn btn-success mt-3">Registrar salida</button>
+</form>
+
+<a href="{% url 'listar_kits' %}" class="btn btn-secondary mt-3">Volver</a>
+{% endblock %}
