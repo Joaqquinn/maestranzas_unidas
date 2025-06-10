@@ -18,10 +18,9 @@ from openpyxl.utils import get_column_letter
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
-# Create your views here.   
-@group_required('Administrador del Sistema')
+# Create your views here.
+@login_required   
 def dashboard_view(request):
-    profile = request.user.profile
     group = request.user.groups.first()
     role_display = group.name if group else "Sin rol"
 
@@ -32,7 +31,6 @@ def dashboard_view(request):
 
     context = {
         'user': request.user,
-        'profile': profile,
         'role_display': role_display,
         'total_piezas': total_piezas,
         'piezas_stock_bajo': piezas_stock_bajo,
