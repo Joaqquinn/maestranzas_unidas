@@ -220,7 +220,7 @@ def registrar_movimiento(request):
                     )
                 except ValidationError as e:
                     form.add_error(None, str(e))
-                    return render(request, 'movimientos/form.html', {'form': form})
+                    return render(request, 'inventario/movim/form.html', {'form': form})
 
             else:
                 movimiento.save()

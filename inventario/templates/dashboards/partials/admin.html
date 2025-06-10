@@ -1,22 +1,34 @@
 
-
-
 {% block dashboard_sidebar %}
-<a href="{% url 'pieza_create' %}" class="list-group-item list-group-item-action">
-    <i class="bi bi-plus-circle me-2"></i>Registrar Pieza
-</a>
-<a href="{% url 'listar_piezas' %}" class="list-group-item list-group-item-action">
-    <i class="bi bi-list-ul me-2"></i>Inventario
-</a>
-{% endblock %}
 
-{% block dashboard_content %}
-<div class="card mb-4">
+
+
+
+
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="bi bi-lightning me-2"></i>Acciones Rápidas</h6>
+    </div>
     <div class="card-body">
-        <h4 class="card-title">Bienvenido, {{ user.first_name }}</h4>
-        <p class="card-text">Rol: <strong>{{ role_display }}</strong></p>
+        <div class="row">
+
+            <div class="col-md-4 mb-3">
+                <a href="{% url 'pieza_create' %}" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-plus-circle me-2"></i>Agregar Producto
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a href="{% url 'listar_piezas' %}" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-list-ul me-2"></i>Ver Inventario
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a href="{% url 'registrar_movimiento' %}" class="btn btn-outline-success w-100">
+                    <i class="bi bi-arrow-repeat me-2"></i>Registrar Movimiento
+                </a>
+
+        </div>
     </div>
 </div>
 
-<!-- Aquí van las tarjetas o gráficas -->
 {% endblock %}
