@@ -1,0 +1,78 @@
+{% extends "authentication/base.html" %}
+{% block title %}Panel Inventario{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Panel de Inventario</h1>
+<p class="text-muted">Hola {{ user.get_full_name }}, aquí puedes gestionar el inventario de la empresa.</p>
+
+<div class="row g-4">
+  <!-- Estadísticas -->
+  <div class="col-md-3">
+    <div class="card border-primary shadow-sm">
+      <div class="card-body text-center">
+        <h5 class="card-title">Total Piezas</h5>
+        <p class="display-6">{{ total_piezas }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-warning shadow-sm">
+      <div class="card-body text-center">
+        <h5 class="card-title">Stock Bajo</h5>
+        <p class="display-6">{{ piezas_stock_bajo }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-success shadow-sm">
+      <div class="card-body text-center">
+        <h5 class="card-title">Movimientos</h5>
+        <p class="display-6">{{ movimientos_totales }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-info shadow-sm">
+      <div class="card-body text-center">
+        <h5 class="card-title">Ubicaciones</h5>
+        <p class="display-6">{{ ubicaciones_distintas }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="my-5">
+
+<!-- Acciones -->
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-primary text-white">Gestión de Piezas</div>
+      <div class="card-body">
+        <a href="{% url 'listar_piezas' %}" class="btn btn-outline-primary w-100 mb-2">Ver Piezas</a>
+        <a href="{% url 'registrar_pieza' %}" class="btn btn-outline-primary w-100">Registrar Nueva Pieza</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-warning text-dark">Movimientos y Lotes</div>
+      <div class="card-body">
+        <a href="{% url 'listar_lotes' %}" class="btn btn-outline-warning w-100 mb-2">Ver Lotes</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-dark text-white">Reportes</div>
+      <div class="card-body">
+        <a href="{% url 'reportes_personalizados' %}" class="btn btn-outline-dark w-100 mb-2">Ver Reportes</a>
+        <a href="{% url 'exportar_reporte_excel' %}" class="btn btn-outline-dark w-100 mb-2">Exportar Excel</a>
+        <a href="{% url 'exportar_reporte_pdf' %}" class="btn btn-outline-dark w-100">Exportar PDF</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

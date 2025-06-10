@@ -1,0 +1,103 @@
+{% extends "authentication/base.html" %}
+{% block title %}Panel Administrador{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Panel del Administrador</h1>
+<p class="text-muted">Bienvenido {{ role_display }}</p>
+
+<div class="row g-4">
+  <!-- Sección de Estadísticas -->
+  <div class="col-md-3">
+    <div class="card border-primary shadow-sm">
+      <div class="card-body text-center">
+        <h5 class="card-title">Total Piezas</h5>
+        <p class="display-6">{{ total_piezas }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-warning shadow-sm">
+      <div class="card-body text-center">
+        <h5 class="card-title">Stock Bajo</h5>
+        <p class="display-6">{{ piezas_stock_bajo }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-success shadow-sm">
+      <div class="card-body text-center">
+        <h5 class="card-title">Movimientos</h5>
+        <p class="display-6">{{ movimientos_totales }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card border-info shadow-sm">
+      <div class="card-body text-center">
+        <h5 class="card-title">Ubicaciones</h5>
+        <p class="display-6">{{ ubicaciones_distintas }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="my-5">
+
+<!-- Accesos rápidos -->
+<div class="row g-4">
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-primary text-white">Inventario</div>
+      <div class="card-body">
+        <a href="{% url 'listar_piezas' %}" class="btn btn-outline-primary w-100 mb-2">Ver Piezas</a>
+        <a href="{% url 'registrar_pieza' %}" class="btn btn-outline-primary w-100 mb-2">Registrar Nueva Pieza</a>
+        <a href="{% url 'listar_lotes' %}" class="btn btn-outline-primary w-100 mb-2">Ver Lotes</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-success text-white">Kits</div>
+      <div class="card-body">
+        <a href="{% url 'listar_kits' %}" class="btn btn-outline-success w-100 mb-2">Ver Kits</a>
+        <a href="{% url 'crear_kit' %}" class="btn btn-outline-success w-100 mb-2">Crear Kit</a>
+        <a href="{% url 'registrar_salida_kit' %}" class="btn btn-outline-success w-100">Registrar Salida de Kit</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-warning text-dark">Proveedores</div>
+      <div class="card-body">
+        <a href="{% url 'listar_proveedores' %}" class="btn btn-outline-warning w-100 mb-2">Ver Proveedores</a>
+        <a href="{% url 'crear_proveedor' %}" class="btn btn-outline-warning w-100">Agregar Proveedor</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-secondary text-white">Ubicación y Categorías</div>
+      <div class="card-body">
+        <a href="{% url 'listar_ubicaciones' %}" class="btn btn-outline-secondary w-100 mb-2">Ver Ubicaciones</a>
+        <a href="{% url 'crear_ubicacion' %}" class="btn btn-outline-secondary w-100 mb-2">Agregar Ubicación</a>
+        <a href="{% url 'listar_categorias' %}" class="btn btn-outline-secondary w-100 mb-2">Ver Categorías</a>
+        <a href="{% url 'crear_categoria' %}" class="btn btn-outline-secondary w-100">Agregar Categoría</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-dark text-white">Reportes</div>
+      <div class="card-body">
+        <a href="{% url 'reportes_personalizados' %}" class="btn btn-outline-dark w-100 mb-2">Ver Reportes</a>
+        <a href="{% url 'exportar_reporte_excel' %}" class="btn btn-outline-dark w-100 mb-2">Exportar Excel</a>
+        <a href="{% url 'exportar_reporte_pdf' %}" class="btn btn-outline-dark w-100">Exportar PDF</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

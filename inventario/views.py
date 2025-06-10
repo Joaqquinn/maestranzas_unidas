@@ -18,27 +18,40 @@ from openpyxl.utils import get_column_letter
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
+
 # Create your views here.
-@login_required   
+@login_required
 def dashboard_view(request):
-    group = request.user.groups.first()
-    role_display = group.name if group else "Sin rol"
+    user = request.user
+    group = user.groups.first()
+    group_name = group.name if group else None
 
-    total_piezas = Pieza.objects.count()
-    piezas_stock_bajo = Pieza.objects.filter(cantidad__lte=F("stock_minimo")).count()
-    movimientos_totales = MovimientoInventario.objects.count()
-    ubicaciones_distintas = Pieza.objects.values('ubicacion').distinct().count()
-
-    context = {
-        'user': request.user,
-        'role_display': role_display,
-        'total_piezas': total_piezas,
-        'piezas_stock_bajo': piezas_stock_bajo,
-        'movimientos_totales': movimientos_totales,
-        'ubicaciones_distintas': ubicaciones_distintas
+    template_map = {
+        "Administrador del Sistema": "dashboards/admin_dashboard.html",
+        "Gestor de Inventario": "dashboards/inventario_dashboard.html",
+        "Comprador": "dashboards/comprador_dashboard.html",
+        "Almacén o Encargado de Logística": "dashboards/logistica_dashboard.html",
+        "Jefe de Producción o Manufactura": "dashboards/produccion_dashboard.html",
     }
 
-    return render(request, 'dashboards/dashboard.html', context)
+    # Datos comunes del dashboard
+    context = {
+        'user': request.user,
+        'role_display': group_name or "Sin rol",
+        'total_piezas': Pieza.objects.count(),
+        'piezas_stock_bajo': Pieza.objects.filter(cantidad__lte=F("stock_minimo")).count(),
+        'movimientos_totales': MovimientoInventario.objects.count(),
+        'ubicaciones_distintas': Pieza.objects.values('ubicacion').distinct().count()
+    }
+
+    template_path = template_map.get(group_name)
+
+    if template_path:
+        return render(request, template_path, context)
+    else:
+        messages.error(request, "No tienes un rol asignado. Contacta al administrador.")
+        return redirect('home')
+
 
 def home(request):
     return render(request, 'inventario/home.html')
@@ -82,7 +95,7 @@ def lista_piezas(request): # Cambiamos el nombre para reflejar 'Pieza'
 def exportar_reporte_excel(request):
     hoy = timezone.now().date()
 
-    piezas_stock_bajo = Pieza.objects.filter(cantidad__lte=models.F('stock_minimo'))
+    piezas_stock_bajo = Pieza.objects.filter(cantidad__lte=F('stock_minimo'))
     lotes_vencidos = Lote.objects.filter(fecha_vencimiento__lt=hoy, pieza__requiere_vencimiento=True)
     lotes_por_vencer = Lote.objects.filter(
         fecha_vencimiento__gte=hoy,
@@ -151,7 +164,7 @@ def editar_ubicacion(request, pk):
     if form.is_valid():
         form.save()
         return redirect('listar_ubicaciones')
-    return render(request, 'inventario/form.html', {'form': form, 'accion': 'Editar'})
+    return render(request, 'ubicaciones/form.html', {'form': form, 'accion': 'Editar'})
 
 
 @login_required
@@ -406,7 +419,7 @@ def registrar_salida_kit(request):
 def reportes_personalizados(request):
     hoy = timezone.now().date() # type: ignore
 
-    piezas_stock_bajo = Pieza.objects.filter(cantidad__lte=models.F('stock_minimo'))
+    piezas_stock_bajo = Pieza.objects.filter(cantidad__lte=F('stock_minimo'))
 
     lotes_vencidos = Lote.objects.filter(
         fecha_vencimiento__lt=hoy,
